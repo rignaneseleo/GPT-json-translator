@@ -24,7 +24,7 @@ Follow the prompts to enter the path to the input JSON file and select the targe
 
 The translated JSON files will be saved in the same directory as the input file with the language code as the filename extension (e.g. `it-IT.json`, `en-US.json`, etc.).
 
-Note: This script uses OpenAI's GPT-3.5-Turbo model for translation, which may incur costs if you exceed the monthly free tier limit. Please refer to [OpenAI's pricing page](https://openai.com/pricing/) for more information on pricing.
+Note: This script uses OpenAI's GPT-3.5-Turbo model for translation, which may incur costs if you exceed the monthly free tier limit. Please refer to [OpenAI's pricing page](https://openai.com/pricing/) for more information on pricing. During my tests, converting a json file of 25 lines in all the languages of the script costed about 0.07 USD.
 
 ## License
 This script is released under the MIT License. See the LICENSE file for more information.
