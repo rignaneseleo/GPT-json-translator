@@ -4,9 +4,10 @@ import openai
 import json
 import os
 import concurrent.futures
+from config import API_KEY
 
 # Set up OpenAI API credentials (https://beta.openai.com/docs/developer-quickstart/your-api-keys)
-openai.api_key = "YOUR KEY HERE"
+openai.api_key = API_KEY
 
 # Set up target languages for translation
 languages = ["it-IT", "en-US", "fr-FR", "es-ES", "de-DE", "pt-PT", "nl-NL", "ru-RU",    "pl-PL", "tr-TR", "zh-CN", "ja-JP", "ko-KR", "ar-AR", "hi-IN", "sv-SE",    "no-NO", "fi-FI", "da-DK", "cs-CZ",
