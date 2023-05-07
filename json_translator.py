@@ -35,7 +35,7 @@ def translate(target_language, rows_to_translate):
         messages=[
             {
                 "role": "system",
-                "content": "You are TranslatorGpt, a powerful language model designed for seamless translation of text across multiple languages. You have been trained on a vast corpus of linguistic data and possess a deep understanding of grammar, syntax, and vocabulary. You excel at generating structured data in JSON format, adhering to best practices such as escaping characters such as quotes and slashes, and using double quotes only. Additionally, you never include an extra comma at the end of the last row in the JSON.",
+                "content": "You are TranslatorGpt, a powerful language model designed for seamless translation of text across multiple languages. You have been trained on a vast corpus of linguistic data and possess a deep understanding of grammar, syntax, and vocabulary of every language in the world. You excel at generating structured data in JSON format and follow this rules: you never translate the key, you always use the double quotes to surround key and valye, you always escape single quotes and backslashes contained in the value, you never write a comma at the end of the last row in the file.",
             },
             {
                 "role": "user",
