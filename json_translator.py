@@ -4,7 +4,7 @@ import openai
 import json
 import os
 import concurrent.futures
-from config import API_KEY, INPUT_FILE
+from config import API_KEY, SOURCE_PATH
 
 # Set up OpenAI API credentials (https://beta.openai.com/docs/developer-quickstart/your-api-keys)
 openai.api_key = API_KEY
@@ -15,8 +15,8 @@ languages = ["it-IT", "en-US", "fr-FR", "es-ES", "de-DE", "pt-PT", "nl-NL", "ru-
 
 
 # Prompt user to enter the path to the input JSON file
-if (INPUT_FILE):
-    input_path = INPUT_FILE
+if (SOURCE_PATH):
+    input_path = SOURCE_PATH
 else:
     input_path = input("Enter the path to the source JSON file: ")
 print(f"Reading input file from {input_path}")
