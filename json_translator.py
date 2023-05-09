@@ -49,9 +49,9 @@ def translate(target_language, rows_to_translate):
     # only double quotes are allowed in JSON, so replace single quotes with double quotes
     translated_json_str = translated_json_str.replace("'", '"')
     print(f"Translation to {target_language} complete.")
-    #print(f"Translated JSON:\n{translated_json}\n")
+    # print(f"Translated JSON:\n{translated_json}\n")
     # convert the string into a json object
-    translated_json= json.loads(translated_json_str)
+    translated_json = json.loads(translated_json_str)
     return translated_json
 
 
@@ -64,13 +64,16 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
         output_path = os.path.join(os.path.dirname(input_path), filename)
         if os.path.exists(output_path):
             with open(output_path, "r") as f:
-                #print(f"Reading existing output file for {target_language}")
-                existing_json = json.load(f)
+                try:
+                    existing_json = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    existing_json = {}
             existing_keys = "\n".join(existing_json.keys())
             missing_keys = set(source_json.keys()) - set(existing_json.keys())
-            print(
-                f"Found {len(missing_keys)} missing keys for {target_language}")
+            
             if missing_keys:
+                print(
+                f"Found {len(missing_keys)} missing keys for {target_language}")
                 filtered_json = {
                     key: value for key, value in source_json.items() if key in missing_keys}
                 # print(f"Filtered JSON:\n{filtered_json}\n")
@@ -86,6 +89,7 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
     for future in concurrent.futures.as_completed(future_to_language):
         target_language, existing_json = future_to_language[future]
         filename = f"{target_language}.json"
+        translated_json=""
         try:
             translated_json = future.result()
             if existing_json:
@@ -98,7 +102,7 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
             print(f"Output file saved as {output_path}")
         except Exception as e:
             print(
-                f"Error occurred while translating to {target_language}: {e}")
+                f"Error occurred while translating to {target_language}: {e}\n{translated_json}\n")
 
 print("Translation complete.")
 
