@@ -10,10 +10,11 @@ from config import API_KEY, SOURCE_PATH
 openai.api_key = API_KEY
 
 # Set up target languages for translation
-languages = ["it-IT", "en-US",
-             "fr-FR", "es-ES", "de-DE", "pt-PT", "pt-BR", "nl-NL", "ru-RU",    "pl-PL", "tr-TR", "zh-CN", "ja-JP", "ko-KR", "ar-AR", "hi-IN", "sv-SE",    "no-NO", "fi-FI", "da-DK", "cs-CZ",
-             "sk-SK", "hu-HU", "ro-RO", "uk-UA",    "bg-BG", "hr-HR", "sr-SP", "sl-SI", "et-EE", "lv-LV", "lt-LT",    "he-IL", "fa-IR", "ur-PK", "bn-IN", "ta-IN", "te-IN", "mr-IN", "ml-IN",    "th-TH", "vi-VN"]
-
+languages = ["zh", "es", "en", "hi", "ar", "pt", "bn", "ru",
+             "ja", "pa", "de", "jv", "fr", "te", "vi", "ko",
+             "mr", "ta", "ur", "tr", "it", "th", "gu", "pl",
+             "uk", "ro", "az", "id", "nl", "sw", "el", "cs",
+             "hu", "he", "sv", "bg", "da", "no", "fi", "sk"]
 
 # Prompt user to enter the path to the input JSON file
 if (SOURCE_PATH):
