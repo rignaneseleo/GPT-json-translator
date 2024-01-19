@@ -4,16 +4,12 @@ import openai
 import json
 import os
 import concurrent.futures
-from config import API_KEY, SOURCE_PATH
+from config import API_KEY, SOURCE_PATH, MAX_THREADS, GPT_MODEL, TRANSLATE_TO
 
-# Set up OpenAI API credentials (https://beta.openai.com/docs/developer-quickstart/your-api-keys)
 openai.api_key = API_KEY
 
 # Set up target languages for translation
-languages = ["it-IT", "en-US",
-             "fr-FR", "es-ES", "de-DE", "pt-PT", "pt-BR", "nl-NL", "ru-RU",    "pl-PL", "tr-TR", "zh-CN", "ja-JP", "ko-KR", "ar-AR", "hi-IN", "sv-SE",    "no-NO", "fi-FI", "da-DK", "cs-CZ",
-             "sk-SK", "hu-HU", "ro-RO", "uk-UA",    "bg-BG", "hr-HR", "sr-SP", "sl-SI", "et-EE", "lv-LV", "lt-LT",    "he-IL", "fa-IR", "ur-PK", "bn-IN", "ta-IN", "te-IN", "mr-IN", "ml-IN",    "th-TH", "vi-VN"]
-
+languages = TRANSLATE_TO
 
 # Prompt user to enter the path to the input JSON file
 if (SOURCE_PATH):
@@ -32,7 +28,7 @@ def translate(target_language, rows_to_translate):
     print(f"Translating to {target_language}...")
     # Call OpenAI API to translate text
     completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model=GPT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -56,7 +52,7 @@ def translate(target_language, rows_to_translate):
 
 
 # Translate the JSON string into target languages
-with concurrent.futures.ThreadPoolExecutor() as executor:
+with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
     # Submit translation tasks to the executor
     future_to_language = {}
     for target_language in languages:
@@ -70,28 +66,38 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
                     existing_json = {}
             existing_keys = "\n".join(existing_json.keys())
             missing_keys = set(source_json.keys()) - set(existing_json.keys())
-            
+
             if missing_keys:
-                print(
-                f"Found {len(missing_keys)} missing keys for {target_language}")
+                print(f"Found {len(missing_keys)} missing keys for {target_language}")
                 filtered_json = {
-                    key: value for key, value in source_json.items() if key in missing_keys}
+                    key: value
+                    for key, value in source_json.items()
+                    if key in missing_keys
+                }
                 # print(f"Filtered JSON:\n{filtered_json}\n")
-                future_to_language[executor.submit(
-                    translate, target_language, filtered_json)] = target_language, existing_json
+                future_to_language[
+                    executor.submit(translate, target_language, filtered_json)
+                ] = (target_language, existing_json)
         else:
             print(
-                f"Output file not found for {target_language}. Generating a new one...")
-            future_to_language[executor.submit(
-                translate, target_language, source_json)] = target_language, {}
+                f"Output file not found for {target_language}. Generating a new one..."
+            )
+            future_to_language[
+                executor.submit(translate, target_language, source_json)
+            ] = (target_language, {})
 
     # Process completed translation tasks and write output files
     for future in concurrent.futures.as_completed(future_to_language):
         target_language, existing_json = future_to_language[future]
         filename = f"{target_language}.json"
-        translated_json=""
+        translated_json = ""
         try:
             translated_json = future.result()
+            if not translated_json:
+                print(
+                    f"Translation to {target_language} failed (empty json returned). Skipping..."
+                )
+                continue
             if existing_json:
                 output_json = {**existing_json, **translated_json}
             else:
@@ -102,7 +108,8 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
             print(f"Output file saved as {output_path}")
         except Exception as e:
             print(
-                f"Error occurred while translating to {target_language}: {e}\n{translated_json}\n")
+                f"Error occurred while translating to {target_language}: {e}\n{translated_json}\n"
+            )
 
 print("Translation complete.")
 
